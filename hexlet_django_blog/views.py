@@ -5,7 +5,7 @@ def index(request):
         request,
         "index.html",
         context={
-            "who": "World",
+            "name": "django_blog",
         },
     )
 
