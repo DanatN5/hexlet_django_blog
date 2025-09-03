@@ -2,22 +2,19 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.generic.base import View, TemplateView
 from django.urls import reverse
+from .models import Article
 
-'''
-def index(request):
-    return render(
-        request,
-        "index.html",
-        context={
-            "name": "article",
-        },
-    )
-'''
 
 class IndexView(View):
-    def get(self, request):
-        context = {"article_id": 42, "tags": "python"}
-        return redirect(reverse("Tags", kwargs=context))
+    def get(self, request, *args, **kwargs):
+        articles = Article.objects.all()[:15]
+        return render(
+            request,
+            "articles/index.html",
+            context={
+                "articles": articles,
+            },
+        )
     
 class TagsView(TemplateView):
     template_name = "articles/tags.html"
