@@ -13,3 +13,6 @@ class Article(models.Model):
 
 class Comment(models.Model):
     pass
+
+class ArticleComment(models.Model):
+    content = models.CharField("content", max_length=100)

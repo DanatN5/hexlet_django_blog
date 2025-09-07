@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.views.generic.base import View, TemplateView
 from django.urls import reverse
-from .models import Article
+from .models import Article, ArticleComment
+from .forms import CommentArticleForm, ArticleForm
+from django.contrib import messages
 
 
 class IndexView(View):
@@ -40,6 +42,42 @@ class ArticleCommentsView(View):
              }
         )
     
+    def post(self, request, *args, **kwargs):
+        form = CommentArticleForm(request.POST)
+        if form.is_valid():
+            comment = ArticleComment(
+                content = form.cleaned_data[
+                "content"
+                ],
+            )
+            comment.save()
+
+
+class ArticleFormCreateView(View):
+    def get(self, request, *args, **kwargs):
+        form = ArticleForm()
+        return render(request, "articles/create.html", {"form": form})
+    
+    def post(self, request, *args, **kwargs):
+        form = ArticleForm(request.POST)
+        if form.is_valid():
+            messages.success(request, "Статья успешно добавлена")
+            form.save()
+            return redirect('articles')
+        
+        messages.error(request, "Не удалось добавить статью")
+        
+        return render(request, 'articles/create.html', {'form': form})
+
+    """  
+    def get(self, request, *args, **kwargs):
+        form = CommentArticleForm()  # Создаем экземпляр нашей формы
+        return render(
+            request, "comment.html", {"form": form}
+        )
+    """
+        
+
 class TagsView(TemplateView):
     template_name = "articles/tags.html"
 
