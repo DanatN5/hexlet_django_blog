@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+{% endif %}
+
+<form action="{% url 'articles_delete' id=article_id %}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Удалить">
+</form>
+
+{% endblock %}

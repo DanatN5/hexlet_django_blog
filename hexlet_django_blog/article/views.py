@@ -68,14 +68,57 @@ class ArticleFormCreateView(View):
         messages.error(request, "Не удалось добавить статью")
         
         return render(request, 'articles/create.html', {'form': form})
+    
 
-    """  
+class ArticleFormEditView(View):
     def get(self, request, *args, **kwargs):
-        form = CommentArticleForm()  # Создаем экземпляр нашей формы
+        article_id = kwargs.get("id")
+        article = Article.objects.get(id=article_id)
+        form = ArticleForm(instance=article)
         return render(
-            request, "comment.html", {"form": form}
+            request,
+            "articles/update.html",
+            {"form": form,
+             "article_id": article_id},
         )
-    """
+    
+    def post(self, request, *args, **kwargs):
+        article_id = kwargs.get("id")
+        article = Article.objects.get(id=article_id)
+        form = ArticleForm(request.POST, instance=article)
+        print(form)
+        if form.is_valid():
+            form.save()
+            return redirect("articles")
+        
+        return render(
+            request,
+            "articles/update.html",
+            {"form": form,
+             "article_id": article_id},
+        )
+    
+class ArticleFormDeleteView(View):
+    def get(self, request, *args, **kwargs):
+        article_id = kwargs.get("id")
+        article = Article.objects.get(id=article_id)
+        form = ArticleForm(instance=article)
+        return render(
+            request,
+            "articles/delete.html",
+            {"form": form,
+             "article_id": article_id},
+        )
+
+
+    def post(self, request, *args, **kwargs):
+        article_id = kwargs.get("id")
+        article = Article.objects.get(id=article_id)
+        if article:
+            article.delete()
+        return redirect("articles")
+
+
         
 
 class TagsView(TemplateView):
